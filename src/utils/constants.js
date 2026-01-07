@@ -63,6 +63,9 @@ module.exports = {
     STUDENT_ID_REGEX: /^[A-Z]{3}\d{6}$/,
     OTP_LENGTH: 6,
     TOKEN_LENGTH: 64,
+    MAX_BORROW_DAYS: 30,
+    DAILY_FINE_RATE: 2.0,
+    MAX_BORROW_LIMIT: 5,
   },
 
   // Time Constants (in seconds)
@@ -72,5 +75,20 @@ module.exports = {
     ACCESS_TOKEN_EXPIRY: 7 * 24 * 60 * 60, // 7 days
     EMAIL_TOKEN_EXPIRY: 24 * 60 * 60, // 24 hours
     PASSWORD_TOKEN_EXPIRY: 60 * 60, // 1 hour
+  },
+  // Added new constants for Library Management System:
+  BOOK_STATUS: {
+    AVAILABLE: "available",
+    BORROWED: "borrowed",
+    RESERVED: "reserved",
+    LOST: "lost",
+    DAMAGED: "damaged",
+  },
+
+  BORROW_STATUS: {
+    BORROWED: "borrowed",
+    RETURNED: "returned",
+    OVERDUE: "overdue",
+    LOST: "lost",
   },
 };

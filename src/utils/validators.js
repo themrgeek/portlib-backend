@@ -190,7 +190,60 @@ class Validators {
       "any.required": "Role is required",
     }),
   });
+  // Add these schemas to the Validators class:
 
+  static borrowBookSchema = Joi.object({
+    barcode: Joi.string().required().messages({
+      "any.required": "Barcode is required",
+    }),
+    durationDays: Joi.number().integer().min(1).max(30).required().messages({
+      "number.min": "Duration must be at least 1 day",
+      "number.max": "Duration cannot exceed 30 days",
+      "any.required": "Duration is required",
+    }),
+  });
+
+  static scanBookSchema = Joi.object({
+    barcode: Joi.string().required().messages({
+      "any.required": "Barcode is required",
+    }),
+    action: Joi.string()
+      .valid("borrow", "return", "check")
+      .required()
+      .messages({
+        "any.only": "Action must be borrow, return, or check",
+        "any.required": "Action is required",
+      }),
+    durationDays: Joi.number().integer().min(1).max(30).when("action", {
+      is: "borrow",
+      then: Joi.required(),
+    }),
+  });
+
+  static addBookSchema = Joi.object({
+    isbn: Joi.string().required().messages({
+      "any.required": "ISBN is required",
+    }),
+    title: Joi.string().required().messages({
+      "any.required": "Title is required",
+    }),
+    author: Joi.string().required().messages({
+      "any.required": "Author is required",
+    }),
+    publisher: Joi.string(),
+    publication_year: Joi.number()
+      .integer()
+      .min(1000)
+      .max(new Date().getFullYear()),
+    genre: Joi.string(),
+    description: Joi.string(),
+    total_copies: Joi.number().integer().min(1).default(1),
+    language: Joi.string().default("English"),
+    pages: Joi.number().integer().min(1),
+    cover_image: Joi.string().uri(),
+    location: Joi.string(),
+    price: Joi.number().min(0),
+  });
   // Validate data against schema
   static async validate(data, schema) {
     try {

@@ -2,6 +2,7 @@ const app = require("./app");
 const db = require("./config/database");
 const EmailService = require("./services/email.service");
 const OTPService = require("./services/otp.service");
+const ReminderService = require("./services/reminder.service");
 
 const PORT = process.env.PORT || 3000;
 
@@ -52,11 +53,19 @@ async function startServer() {
             `);
     });
 
+    // Start reminder scheduler (non-blocking)
+    if (process.env.DISABLE_REMINDERS !== "true") {
+      ReminderService.start();
+    } else {
+      console.log("🔕 Reminders disabled via DISABLE_REMINDERS env flag");
+    }
+
     // Graceful shutdown
     process.on("SIGTERM", () => {
       console.log("SIGTERM received. Shutting down gracefully...");
       server.close(() => {
         console.log("Server closed");
+        ReminderService.stop();
         process.exit(0);
       });
     });
@@ -65,6 +74,7 @@ async function startServer() {
       console.log("SIGINT received. Shutting down gracefully...");
       server.close(() => {
         console.log("Server closed");
+        ReminderService.stop();
         process.exit(0);
       });
     });

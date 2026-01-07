@@ -9,6 +9,10 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth.routes");
 const errorHandler = require("./middleware/errorHandler");
 const rateLimitConfig = require("./config/rateLimit");
+const bookRoutes = require("./routes/books.routes");
+const borrowRoutes = require("./routes/borrow.routes");
+const librarianRoutes = require("./routes/librarian.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 // Initialize Express app
 const app = express();
@@ -92,10 +96,46 @@ app.get("/api-docs", (req, res) => {
         change_password: "POST /api/auth/password/change",
         logout: "POST /api/auth/logout",
       },
+      books: {
+        list: "GET /api/books/available",
+        search: "GET /api/books/search",
+        add: "POST /api/books/add",
+      },
+      borrow: {
+        borrow: "POST /api/borrow/borrow",
+        current: "GET /api/borrow/current",
+        history: "GET /api/borrow/history",
+      },
+      librarian: {
+        pending_returns: "GET /api/librarian/pending-returns",
+        overdue: "GET /api/librarian/overdue-books",
+      },
+      admin: {
+        books: [
+          "GET /api/admin/books",
+          "POST /api/admin/books",
+          "PATCH /api/admin/books/:bookId",
+          "POST /api/admin/books/:bookId/archive",
+          "POST /api/admin/books/:bookId/restore",
+          "POST /api/admin/books/:bookId/copies/adjust",
+        ],
+        activities: [
+          "GET /api/admin/activities/borrows",
+          "GET /api/admin/activities/overdue",
+          "GET /api/admin/activities/students/:studentId",
+          "GET /api/admin/activities/reservations",
+          "POST /api/admin/activities/reservations",
+          "POST /api/admin/activities/reservations/:reservationId/cancel",
+        ],
+      },
     },
   });
 });
-
+// After existing routes, add:
+app.use("/api/books", bookRoutes);
+app.use("/api/borrow", borrowRoutes);
+app.use("/api/librarian", librarianRoutes);
+app.use("/api/admin", adminRoutes);
 // 404 handler
 app.use(errorHandler.notFound);
 
